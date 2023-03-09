@@ -15,6 +15,7 @@ using namespace QsLogging;
 #include <QJsonObject>
 void rev_log(const QString &strMsg,Level level)
 {
+    //test git
     if(level == 0)
     {
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN);
