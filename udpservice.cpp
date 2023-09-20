@@ -96,6 +96,10 @@ void UdpService::slot_proc_real_data(QByteArray data)
     {
         if((data[0] & 0xFF) || (data[1] & 0xFF))
         {
+//            QByteArray clearData;
+//            clearData.append(static_cast<char>(0x00));
+//            clearData.append(static_cast<char>(0x00));
+//            send_message_to_plc(WRITE_PLC,ADDRESS_D10010,0x02,clearData);
 //            QThread::msleep(200);
             send_message_to_plc(READ_PLC,ADDRESS_D10000,0x14,nullptr);
         }

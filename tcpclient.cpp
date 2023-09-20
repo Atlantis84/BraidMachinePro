@@ -12,6 +12,7 @@
 #include "gdatafactory.h"
 #include <QTextCodec>
 #include <QThread>
+#include <QCoreApplication>
 TcpClient* TcpClient::_instance = nullptr;
 TcpClient::TcpClient()
 {
@@ -94,6 +95,7 @@ void TcpClient::send_to_tcp_server(QByteArray data)
 
     QJsonDocument doc_data(root);
     QByteArray request_data = doc_data.toJson(QJsonDocument::Compact);
+    QLOG_WARN()<<u8"发送至MES的JSON信息:"<<QString(request_data);
 
     m_pTcpSocketClient->write(request_data,request_data.length());
     m_pTcpSocketClient->flush();

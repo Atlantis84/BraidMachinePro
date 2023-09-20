@@ -39,4 +39,10 @@ INCLUDEPATH += .\QsLog-master
 DEFINES += QSLOG_IS_SHARED_LIBRARY_IMPORT
 DEFINES += QS_LOG_LINE_NUMBERS
 
-LIBS += -L$$PWD\lib\x64\ -lQsLog2
+win32: LIBS += -L$$PWD/lib/x64/ -lQsLog2
+
+INCLUDEPATH += $$PWD/lib/x64
+DEPENDPATH += $$PWD/lib/x64
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/lib/x64/QsLog2.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/lib/x64/libQsLog2.a
