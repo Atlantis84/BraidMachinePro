@@ -108,9 +108,24 @@ void UdpService::slot_proc_real_data(QByteArray data)
     }
     else//SN from PLC
     {
+        QLOG_WARN()<<"the SN address is:"<<data;
+        int len=0;
+        for (int i=data.length()-1;i>data.length()-3;i--) {
+            if(data[i] & 0xFF)
+                len = data[i];
+        }
         QByteArray tmpArray;
-        for(int i=0;i<7;i++)
-            tmpArray.append(data[i]);
+        if(len == 7)
+        {
+            for(int i=0;i<7;i++)
+                tmpArray.append(data[i]);
+        }
+        else
+        {
+            for(int i=0;i<12;i++)
+                tmpArray.append(data[i]);
+        }
+
         QLOG_WARN()<<"the SN is:"<<tmpArray;
         emit signal_send_SN_to_MES(tmpArray);
     }

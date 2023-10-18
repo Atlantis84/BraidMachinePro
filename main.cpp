@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
     Logger& logger = Logger::instance();
     logger.setLoggingLevel(QsLogging::TraceLevel);
 
-    const QString sLogPath(QDir(QCoreApplication::applicationDirPath()).filePath("log.txt"));
-    DestinationPtr fileDestination(DestinationFactory::MakeFileDestination(sLogPath, EnableLogRotation, MaxSizeBytes(1024*1024), MaxOldLogCount(5000)));
+    const QString sLogPath(QDir(QCoreApplication::applicationDirPath()).filePath("\Log\\log.txt"));
+    DestinationPtr fileDestination(DestinationFactory::MakeFileDestination(sLogPath, EnableLogRotation, MaxSizeBytes(1024*1024), MaxOldLogCount(100)));
     logger.addDestination(fileDestination);
 
     DestinationPtr debugDestination(DestinationFactory::MakeDebugOutputDestination());

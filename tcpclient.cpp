@@ -19,6 +19,7 @@ TcpClient::TcpClient()
     m_pTcpSocketClient = nullptr;
     m_pMonitorCount = 0;
     m_pAlreadySendSign = false;
+    m_pExPackageQuatity = 0;
 }
 
 int exitSign =0;
@@ -118,16 +119,37 @@ void TcpClient::slot_rev_from_tcp_server()
     QLOG_WARN()<<jsonObject.value("StandNum").toString();
     QLOG_WARN()<<jsonObject.value("PackNum").toString();
 
+    int StandNum = jsonObject.value("StandNum").toString().toInt();
+    int PackNum = jsonObject.value("PackNum").toString().toInt();
+
     short rc;
     if(jsonObject.value("ResultCode").toString() == "OK")
+    {
         rc = 1;
+        m_pExPackageQuatity = PackNum;
+    }
     else if(jsonObject.value("ResultCode").toString() == "NG")
-        rc = 2;
+    {
+        if(PackNum != m_pExPackageQuatity)
+        {
+            QLOG_ERROR()<<"*******fake NG*******";
+            m_pExPackageQuatity = PackNum;
+            rc = 1;
+        }
+        else
+        {
+            rc = 2;
+            QLOG_ERROR()<<"*******real NG*******";
+        }
+    }
     else
     {
         QLOG_ERROR()<<"the message from Mes exist ERROR!";
         return;
     }
+
+    if(StandNum == PackNum)
+        m_pExPackageQuatity = 0;
 
     short a,b;
     a = jsonObject.value("StandNum").toString().toShort();

@@ -41,7 +41,7 @@ private:
     int m_pMonitorCount;
     QByteArray m_pCurrentSN;
     bool m_pAlreadySendSign;
-
+    int m_pExPackageQuatity;
 signals:
     void signal_clear_read_sign();
     void signal_query_PLC_sign();
