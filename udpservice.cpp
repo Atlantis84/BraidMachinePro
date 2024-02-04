@@ -87,7 +87,7 @@ void UdpService::slot_clear_read_sign()
     QByteArray clearData;
     clearData.append(static_cast<char>(0x00));
     clearData.append(static_cast<char>(0x00));
-    send_message_to_plc(WRITE_PLC,ADDRESS_D10010,0x02,clearData);
+    send_message_to_plc(WRITE_PLC,ADDRESS_D10000,0x02,clearData);
 }
 
 void UdpService::slot_proc_real_data(QByteArray data)
@@ -101,28 +101,32 @@ void UdpService::slot_proc_real_data(QByteArray data)
 //            clearData.append(static_cast<char>(0x00));
 //            send_message_to_plc(WRITE_PLC,ADDRESS_D10010,0x02,clearData);
 //            QThread::msleep(200);
-            send_message_to_plc(READ_PLC,ADDRESS_D10000,0x14,nullptr);
+            send_message_to_plc(READ_PLC,ADDRESS_D10001,0x66,nullptr);
         }
         else
             ;
     }
     else//SN from PLC
     {
-        QLOG_WARN()<<"the SN address is:"<<data;
         int len=0;
-        for (int i=data.length()-1;i>data.length()-3;i--) {
+        for (int i=0;i<2;i++) {
             if(data[i] & 0xFF)
                 len = data[i];
         }
         QByteArray tmpArray;
         if(len == 7)
         {
-            for(int i=0;i<7;i++)
+            for(int i=2;i<9;i++)
+                tmpArray.append(data[i]);
+        }
+        else if(len == 12)
+        {
+            for(int i=2;i<14;i++)
                 tmpArray.append(data[i]);
         }
         else
         {
-            for(int i=0;i<12;i++)
+            for(int i=2;i<28;i++)
                 tmpArray.append(data[i]);
         }
 
@@ -188,23 +192,28 @@ void UdpService::slot_proc_plc_msg(const QByteArray data_array)
 
 void UdpService::slot_query_PLC_sign()
 {
-    send_message_to_plc(READ_PLC,ADDRESS_D10010,0x02,nullptr);
+    send_message_to_plc(READ_PLC,ADDRESS_D10000,0x02,nullptr);
 }
 
 void UdpService::slot_send_Mes_info_to_PLC(const QString SN, const short OK_NG, const short standard_num, const short current_num)
 {
     QByteArray data;
     data.append(SN.toUtf8());
-    for(int i = data.length();i<20;i++)
+    for(int i = data.length();i<100;i++)
         data.append(static_cast<char>(0x00));
-    data.append(static_cast<char>(0xFF&(OK_NG>>8)));
-    data.append(static_cast<char>(0xFF&OK_NG));
+    QByteArray data1;
+    data1.append(static_cast<char>(0xFF&(OK_NG>>8)));
+    data1.append(static_cast<char>(0xFF&OK_NG));
 
-    data.append(static_cast<char>(0xFF&(standard_num>>8)));
-    data.append(static_cast<char>(0xFF&standard_num));
+    data1.append(static_cast<char>(0xFF&(standard_num>>8)));
+    data1.append(static_cast<char>(0xFF&standard_num));
 
-    data.append(static_cast<char>(0xFF&(current_num>>8)));
-    data.append(static_cast<char>(0xFF&current_num));
+    data1.append(static_cast<char>(0xFF&(current_num>>8)));
+    data1.append(static_cast<char>(0xFF&current_num));
 
-    send_message_to_plc(WRITE_PLC,ADDRESS_D10020,data.length(),data);
+    send_message_to_plc(WRITE_PLC,ADDRESS_D11000,data.length(),data);
+    QEventLoop eventloop;
+    QTimer::singleShot(200,&eventloop,&QEventLoop::quit);
+    eventloop.exec();
+    send_message_to_plc(WRITE_PLC,ADDRESS_D11500,data1.length(),data1);
 }

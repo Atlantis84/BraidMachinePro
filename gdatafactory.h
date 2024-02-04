@@ -9,9 +9,10 @@
 #define WRITE_PLC 0x02 //function code of write plc
 
 #define ADDRESS_D10000 0x2710
-#define ADDRESS_D10010 0x271A
+#define ADDRESS_D10001 0x2711
 
-#define ADDRESS_D10020 0x2724
+#define ADDRESS_D11000 0x2AF8
+#define ADDRESS_D11500 0x2CEC
 class GDataFactory : public QObject
 {
     Q_OBJECT
